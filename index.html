@@ -1,0 +1,92 @@
+<html>
+
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <title>Hello there</title>
+</head>
+
+<body>
+    <div id="hello" style="left: 2346px; top: 375px; transform: rotate(72.9795deg);">Hello</div>
+
+    <style>
+        body {
+            width: 100vw;
+            height: 100vh;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #000000;
+            cursor: none;
+        }
+
+        #hello {
+            position: absolute;
+            transform: translate(-50%, -50%);
+            top: 50%;
+            left: 50%;
+            color: #ffffff;
+            font-size: 50px;
+            transition: transform linear 0.1s;
+            user-select: none;
+        }
+    </style>
+    <script lang="javascript">
+        let rotation = 0;
+        let prevDegrees = 0;
+        let prevTouch = 0;
+        let hello = document.getElementById('hello');
+
+        const mousemoveListener = (e) => {
+            moveHello(e.x, e.y);
+
+            if (Math.abs(e.movementX) < 2 && Math.abs(e.movementY) < 2) {
+                return;
+            }
+
+            rotateHello(e.movementX, e.movementY)
+        };
+
+        const touchmoveListener = (e) => {
+            document.removeEventListener('mousemove', mousemoveListener);
+            let currentTouch = e.touches[0];
+            let xChange = currentTouch.clientX - prevTouch.clientX;
+            let yChange = currentTouch.clientY - prevTouch.clientY;
+            prevTouch = currentTouch;
+
+            moveHello(currentTouch.clientX, currentTouch.clientY);
+
+            if (Math.abs(xChange) < 2 && Math.abs(yChange) < 2) {
+                return;
+            }
+
+            rotateHello(xChange, yChange);
+
+        }
+
+        document.addEventListener('mousemove', mousemoveListener);
+        document.addEventListener('touchmove', touchmoveListener);
+
+
+        function moveHello(x, y) {
+            hello.style.left = x + 'px';
+            hello.style.top = y + 'px';
+        }
+
+        function rotateHello(vectorX, vectorY) {
+            // uu, much math, very solution
+            let degrees = (Math.atan2(vectorX, vectorY * -1) / Math.PI) * 180;
+
+            if (prevDegrees > 90 && degrees < -90) {
+                rotation++;
+            }
+            if (degrees > 90 && prevDegrees < -90) {
+                rotation--;
+            }
+            prevDegrees = degrees;
+            hello.style.transform = `rotate(${360 * rotation + degrees}deg)`;
+        }
+    </script>
+</body>
+
+</html>
